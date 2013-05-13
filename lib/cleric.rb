@@ -1,0 +1,1 @@
+require 'cleric/cli'
