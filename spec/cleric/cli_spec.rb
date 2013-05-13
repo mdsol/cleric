@@ -21,3 +21,32 @@ describe 'Command line' do
     end
   end
 end
+
+module Cleric
+  describe Repo do
+    describe '#create' do
+      let(:name) { 'example_name' }
+      let(:config) { mock(CLIConfigurationProvider) }
+      let(:agent) { mock(GitHubAgent) }
+      let(:manager) { mock(RepoManager, create: true) }
+      before(:each) do
+        CLIConfigurationProvider.stub(:new) { config }
+        GitHubAgent.stub(:new) { agent }
+        RepoManager.stub(:new) { manager }
+      end
+
+      it 'creates a configured GitHub agent' do
+        GitHubAgent.should_receive(:new).with(config)
+        subject.create(name)
+      end
+      it 'creates a repo manager configured with the agent' do
+        RepoManager.should_receive(:new).with(agent)
+        subject.create(name)
+      end
+      it 'delegates creation to the manager' do
+        manager.should_receive(:create).with(name)
+        subject.create(name)
+      end
+    end
+  end
+end
