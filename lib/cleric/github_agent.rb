@@ -21,6 +21,10 @@ module Cleric
     private
 
     def client
+      @client ||= create_client
+    end
+
+    def create_client
       credentials = @config.github_credentials
       client = Octokit::Client.new(credentials)
     end

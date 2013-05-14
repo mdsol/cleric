@@ -35,6 +35,14 @@ module Cleric
         client.should_receive(:add_team_repository).with(1234, 'my_org/my_repo')
       end
     end
+
+    it 'uses a single GitHub client across multiple calls' do
+      Octokit::Client.should_receive(:new).once
+      3.times do
+        agent.create_repo('my_org/my_repo')
+        agent.add_repo_to_team('my_org/my_repo', '1234')
+      end
+    end
   end
 end
 
