@@ -28,24 +28,24 @@ module Cleric
       let(:name) { 'example_name' }
       let(:config) { mock(CLIConfigurationProvider) }
       let(:agent) { mock(GitHubAgent) }
-      let(:manager) { mock(RepoManager, create: true) }
+      let(:manager) { mock(RepoManager).as_null_object }
+
       before(:each) do
         CLIConfigurationProvider.stub(:new) { config }
         GitHubAgent.stub(:new) { agent }
         RepoManager.stub(:new) { manager }
+        subject.stub_chain(:options, :[]) { '1234' }
       end
+      after(:each) { subject.create(name) }
 
       it 'creates a configured GitHub agent' do
         GitHubAgent.should_receive(:new).with(config)
-        subject.create(name)
       end
       it 'creates a repo manager configured with the agent' do
         RepoManager.should_receive(:new).with(agent)
-        subject.create(name)
       end
       it 'delegates creation to the manager' do
-        manager.should_receive(:create).with(name)
-        subject.create(name)
+        manager.should_receive(:create).with(name, '1234')
       end
     end
   end
