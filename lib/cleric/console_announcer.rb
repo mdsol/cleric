@@ -1,5 +1,7 @@
 module Cleric
   class ConsoleAnnouncer
+    include ANSI::Code
+
     def initialize(io)
       @io = io
     end
@@ -9,7 +11,7 @@ module Cleric
     #
     # @param description [String] Description of the action completed.
     def successful_action(description)
-      @io.puts(description)
+      @io.puts(green { description })
     end
   end
 end

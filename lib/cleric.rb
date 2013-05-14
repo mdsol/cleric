@@ -1,3 +1,4 @@
+require 'ansi/code'
 require 'octokit'
 
 require 'cleric/cli'
