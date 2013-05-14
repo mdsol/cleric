@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.3.4)
+    ansi (1.4.3)
     coderay (1.0.9)
     diff-lcs (1.2.4)
     faraday (0.8.7)
@@ -60,6 +61,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  ansi (~> 1.4)
   guard-rspec (~> 3.0)
   octokit (~> 1.24)
   rspec (~> 2.13)
