@@ -1,7 +1,8 @@
 module Cleric
   class RepoManager
-    def initialize(repo_agent)
+    def initialize(repo_agent, announcer)
       @repo_agent = repo_agent
+      @announcer = announcer
     end
 
     # Creates a repo.
@@ -9,7 +10,9 @@ module Cleric
     # @param team [String] Numerical id of the team.
     def create(name, team)
       @repo_agent.create_repo(name)
+      @announcer.successful_action("Repo \"#{name}\" created")
       @repo_agent.add_repo_to_team(name, team)
+      @announcer.successful_action("Repo \"#{name}\" added to team \"#{team}\"")
     end
   end
 end

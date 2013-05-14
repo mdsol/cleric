@@ -26,11 +26,13 @@ module Cleric
   describe Repo do
     describe '#create' do
       let(:name) { 'example_name' }
+      let(:announcer) { mock(ConsoleAnnouncer) }
       let(:config) { mock(CLIConfigurationProvider) }
       let(:agent) { mock(GitHubAgent) }
       let(:manager) { mock(RepoManager).as_null_object }
 
       before(:each) do
+        ConsoleAnnouncer.stub(:new) { announcer }
         CLIConfigurationProvider.stub(:new) { config }
         GitHubAgent.stub(:new) { agent }
         RepoManager.stub(:new) { manager }
@@ -38,11 +40,14 @@ module Cleric
       end
       after(:each) { subject.create(name) }
 
+      it 'creates a console announcer' do
+        ConsoleAnnouncer.should_receive(:new).with($stdout)
+      end
       it 'creates a configured GitHub agent' do
         GitHubAgent.should_receive(:new).with(config)
       end
       it 'creates a repo manager configured with the agent' do
-        RepoManager.should_receive(:new).with(agent)
+        RepoManager.should_receive(:new).with(agent, announcer)
       end
       it 'delegates creation to the manager' do
         manager.should_receive(:create).with(name, '1234')
