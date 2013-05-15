@@ -7,11 +7,11 @@ module Cleric
     # Returns GitHub credentials.
     # @return [Hash] Hash of credentials, e.g. `{ login: 'me', password: 'secret'}`
     def github_credentials
-      $stdout.print "GitHub login: "
-      login = $stdin.readline.chomp
-      $stdout.print "GitHub password: "
-      password = $stdin.readline.chomp
-      { login: login, password: password }
+      if github = config['github']
+        { login: github['login'], oauth_token: github['oauth_token'] }
+      else
+        { login: ask("GitHub login"), password: ask("GitHub password") }
+      end
     end
 
     # Saves the GitHub credentials.
@@ -35,8 +35,17 @@ module Cleric
 
     private
 
+    def ask(prompt)
+      $stdout.print "#{prompt}: "
+      $stdin.readline.chomp
+    end
+
     def config
-      @config ||= YAML::load(File.open(@filename))
+      @config ||= load_config
+    end
+
+    def load_config
+      File.exists?(@filename) ? YAML::load(File.open(@filename)) : {}
     end
   end
 end

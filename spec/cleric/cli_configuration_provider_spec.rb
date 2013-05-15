@@ -2,31 +2,43 @@ require 'spec_helper'
 
 module Cleric
   describe CLIConfigurationProvider do
-    before(:all) do
-      Dir.mkdir('tmp') unless Dir.exists?('tmp')
-      File.open('tmp/clericrc', 'w') do |file|
-        file.puts('hipchat:')
-        file.puts('  api_token: API_TOKEN')
-        file.puts('  announcement_room_id: ROOM_ID')
-      end
-    end
-    after(:all) do
-      File.delete('tmp/clericrc')
-    end
+    subject(:config) { CLIConfigurationProvider.new(filename) }
+    let(:filename) { 'tmp/clericrc' }
+    let(:saved_config) { "hipchat:\n  api_token: API_TOKEN\n  announcement_room_id: ROOM_ID" }
 
-    subject(:config) { CLIConfigurationProvider.new('tmp/clericrc') }
+    before(:each) do
+      Dir.mkdir('tmp') unless Dir.exists?('tmp')
+      File.open(filename, 'w') { |file| file.puts(saved_config) }
+    end
+    after(:each) do
+      File.delete(filename)
+    end
 
     describe '#github_credentials' do
-      it 'prompts for username and password' do
+      before(:each) do
+        # Stubbing credential input as if the load fails and `readline` is
+        # *not* stubbed then the test run will stall waiting for input!
         $stdin.stub(:readline).and_return("me\n", "secret\n")
-        config.github_credentials.should == { login: 'me', password: 'secret' }
+      end
+
+      context 'when no credentials are saved' do
+        it 'prompts for username and password' do
+          config.github_credentials.should == { login: 'me', password: 'secret' }
+        end
+      end
+      context 'when credentials are save' do
+        let(:saved_config) { "github:\n  login: ME\n  oauth_token: ABC123" }
+
+        it 'loads the credentials from the user config file' do
+          config.github_credentials.should == { login: 'ME', oauth_token: 'ABC123' }
+        end
       end
     end
 
     describe '#github_credentials=' do
       it 'saves the credentials to the config file' do
         config.github_credentials = { login: 'me', oauth_token: 'abc123' }
-        file = YAML::load(File.open('tmp/clericrc'))
+        file = YAML::load(File.open(filename))
         file['github']['login'].should == 'me'
         file['github']['oauth_token'].should == 'abc123'
       end
