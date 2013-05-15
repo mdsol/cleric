@@ -23,6 +23,15 @@ module Cleric
       end
     end
 
+    describe '#github_credentials=' do
+      it 'saves the credentials to the config file' do
+        config.github_credentials = { login: 'me', oauth_token: 'abc123' }
+        file = YAML::load(File.open('tmp/clericrc'))
+        file['github']['login'].should == 'me'
+        file['github']['oauth_token'].should == 'abc123'
+      end
+    end
+
     describe '#hipchat_announcement_room_id' do
       it 'loads the room id from the user config file' do
         config.hipchat_announcement_room_id.should == 'ROOM_ID'

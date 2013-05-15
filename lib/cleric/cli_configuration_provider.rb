@@ -14,6 +14,13 @@ module Cleric
       { login: login, password: password }
     end
 
+    # Saves the GitHub credentials.
+    # @param values [Hash] Hash of credentials, e.g. `{ login: 'me', oauth_token: 'abc123'}`
+    def github_credentials=(values)
+      config['github'] = { 'login' => values[:login], 'oauth_token' => values[:oauth_token] }
+      File.open(@filename, 'w') {|file| file.write(YAML::dump(config)) }
+    end
+
     # Returns HipChat announcement room id.
     # @return [String] The room id, either numeric or the room name.
     def hipchat_announcement_room_id

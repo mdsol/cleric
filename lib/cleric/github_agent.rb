@@ -11,6 +11,12 @@ module Cleric
       client.add_team_repository(team.to_i, repo)
     end
 
+    # Creates a GitHub authorization and saves it to the config.
+    def create_authorization
+      auth = client.create_authorization(scopes: %w(repo), note: 'Cleric')
+      @config.github_credentials = { login: credentials[:login], oauth_token: auth.token }
+    end
+
     # Creates a GitHub repo.
     # @param name [String] Name of the repo, e.g. "my_org/my_repo".
     def create_repo(name)
@@ -25,8 +31,11 @@ module Cleric
     end
 
     def create_client
-      credentials = @config.github_credentials
       client = Octokit::Client.new(credentials)
+    end
+
+    def credentials
+      @credentials ||= @config.github_credentials
     end
   end
 end
