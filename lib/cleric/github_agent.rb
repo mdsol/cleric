@@ -4,6 +4,15 @@ module Cleric
       @config = config
     end
 
+    # Adds chatroom notifications to a repo.
+    # @param repo [String] Name of the repo, e.g. "my_org/my_repo".
+    # @param chatroom [String] Name or id of the chatroom.
+    def add_chatroom_to_repo(repo, chatroom)
+      client.create_hook(
+        repo, 'hipchat', auth_token: @config.hipchat_repo_api_token, room: chatroom
+      )
+    end
+
     # Adds a GitHub repo to a team.
     # @param repo [String] Name of the repo, e.g. "my_org/my_repo".
     # @param team [String] Numeric id of the team.

@@ -14,12 +14,15 @@ module Cleric
     include CLIDefaults
 
     desc 'create <name>', 'Create the repo <name> and assign a team'
-    option :team, required: true, type: :numeric, desc: 'The team\'s numerical id'
+    option :team, type: :numeric, required: true,
+      desc: 'The team\'s numerical id'
+    option :chatroom, type: :string,
+      desc: 'Send repo notifications to the chatroom with this name or id'
     def create(name)
       console = ConsoleAnnouncer.new($stdout)
       hipchat = HipChatAnnouncer.new(config, console)
       manager = RepoManager.new(github, hipchat)
-      manager.create(name, options[:team])
+      manager.create(name, options[:team], { chatroom: options[:chatroom] })
     end
   end
 

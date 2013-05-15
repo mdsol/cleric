@@ -4,7 +4,14 @@ module Cleric
   describe CLIConfigurationProvider do
     subject(:config) { CLIConfigurationProvider.new(filename) }
     let(:filename) { 'tmp/clericrc' }
-    let(:saved_config) { "hipchat:\n  api_token: API_TOKEN\n  announcement_room_id: ROOM_ID" }
+    let(:saved_config) do
+      [
+        'hipchat:',
+        '  api_token: API_TOKEN',
+        '  announcement_room_id: ROOM_ID',
+        '  repo_api_token: REPO_API_TOKEN'
+      ].join("\n")
+    end
 
     before(:each) do
       Dir.mkdir('tmp') unless Dir.exists?('tmp')
@@ -53,6 +60,12 @@ module Cleric
     describe '#hipchat_api_token' do
       it 'loads the token from the user config file' do
         config.hipchat_api_token.should == 'API_TOKEN'
+      end
+    end
+
+    describe '#hipchat_repo_api_token' do
+      it 'loads the token from the user config file' do
+        config.hipchat_repo_api_token.should == 'REPO_API_TOKEN'
       end
     end
   end

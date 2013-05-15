@@ -64,7 +64,15 @@ module Cleric
           ConsoleAnnouncer.stub(:new) { console }
           HipChatAnnouncer.stub(:new) { hipchat }
           RepoManager.stub(:new) { manager }
-          repo.stub_chain(:options, :[]) { '1234' }
+
+          # Thor classes access their options through the `option` method
+          # so the only option (pun intended) is to mock as follows.
+          repo.stub_chain(:options, :[]) do |opt|
+            case opt
+            when :team then '1234'
+            when :chatroom then 'my_room'
+            end
+          end
         end
         after(:each) { repo.create(name) }
 
@@ -79,7 +87,7 @@ module Cleric
           RepoManager.should_receive(:new).with(agent, hipchat)
         end
         it 'delegates creation to the manager' do
-          manager.should_receive(:create).with(name, '1234')
+          manager.should_receive(:create).with(name, '1234', hash_including(chatroom: 'my_room'))
         end
       end
     end

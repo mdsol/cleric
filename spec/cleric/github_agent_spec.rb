@@ -15,6 +15,17 @@ module Cleric
       end
     end
 
+    describe '#add_chatroom_to_repo' do
+      before(:each) { config.stub(:hipchat_repo_api_token) { 'REPO_API_TOKEN' } }
+      after(:each) { agent.add_chatroom_to_repo('my_org/my_repo', 'my_room') }
+
+      include_examples :client
+      it 'adds the chatroom to the repo via the client' do
+        client.should_receive(:create_hook)
+          .with('my_org/my_repo', 'hipchat', room: 'my_room', auth_token: 'REPO_API_TOKEN')
+      end
+    end
+
     describe '#add_repo_to_team' do
       after(:each) { agent.add_repo_to_team('my_org/my_repo', '1234') }
 

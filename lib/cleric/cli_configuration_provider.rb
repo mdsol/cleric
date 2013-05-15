@@ -33,6 +33,13 @@ module Cleric
       config['hipchat']['api_token']
     end
 
+    # Returns repo HipChat API token, i.e. for notifications from repos to
+    # chatrooms.
+    # @return [String] The API token.
+    def hipchat_repo_api_token
+      config['hipchat']['repo_api_token']
+    end
+
     private
 
     def ask(prompt)
