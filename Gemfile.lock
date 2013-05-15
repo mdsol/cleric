@@ -21,6 +21,11 @@ GEM
       guard (>= 1.8)
       rspec (~> 2.13)
     hashie (2.0.5)
+    hipchat-api (1.0.5)
+      httparty
+    httparty (0.11.0)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     listen (1.1.1)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
@@ -28,6 +33,7 @@ GEM
     lumberjack (1.0.3)
     method_source (0.8.1)
     multi_json (1.7.3)
+    multi_xml (0.5.3)
     multipart-post (1.2.0)
     netrc (0.7.7)
     octokit (1.24.0)
@@ -63,6 +69,7 @@ PLATFORMS
 DEPENDENCIES
   ansi (~> 1.4)
   guard-rspec (~> 3.0)
+  hipchat-api (~> 1.0)
   octokit (~> 1.24)
   rspec (~> 2.13)
   thor (~> 0.18)
