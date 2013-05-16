@@ -13,7 +13,9 @@ module Cleric
     end
 
     describe '#create' do
-      after(:each) { manager.create('my_org/my_repo', 123, chatroom: 'my_room') }
+      let(:chatroom) { 'my_room' }
+
+      after(:each) { manager.create('my_org/my_repo', 123, chatroom: chatroom) }
 
       it 'tells the configured repo agent to create the repo' do
         repo_agent.should_receive(:create_repo).with('my_org/my_repo')
@@ -28,12 +30,25 @@ module Cleric
         announcer.should_receive(:successful_action)
           .with('Repo "my_org/my_repo" added to team "123"')
       end
-      it 'tells the agent to add chatroom notification to the repo' do
-        repo_agent.should_receive(:add_chatroom_to_repo).with('my_org/my_repo', 'my_room')
+      context 'when passed a chatroom' do
+        it 'tells the agent to add chatroom notification to the repo' do
+          repo_agent.should_receive(:add_chatroom_to_repo).with('my_org/my_repo', 'my_room')
+        end
+        it 'announces the successful addition of the chatroom to the repo' do
+          announcer.should_receive(:successful_action)
+            .with('Repo "my_org/my_repo" notifications will be sent to chatroom "my_room"')
+        end
       end
-      it 'announces the successful addition of the chatroom to the repo' do
-        announcer.should_receive(:successful_action)
-          .with('Repo "my_org/my_repo" notifications will be sent to chatroom "my_room"')
+      context 'when passed a nil chatroom' do
+        let(:chatroom) { nil }
+
+        it 'does not tell the agent to add chatroom notification to the repo' do
+          repo_agent.should_not_receive(:add_chatroom_to_repo)
+        end
+        it 'does not announces the successful addition of the chatroom to the repo' do
+          announcer.should_not_receive(:successful_action)
+            .with(/\ARepo "my_org\/my_repo" notifications will be sent to chatroom/)
+        end
       end
     end
   end

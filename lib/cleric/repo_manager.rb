@@ -14,8 +14,11 @@ module Cleric
       @announcer.successful_action("Repo \"#{name}\" created")
       @repo_agent.add_repo_to_team(name, team)
       @announcer.successful_action("Repo \"#{name}\" added to team \"#{team}\"")
-      @repo_agent.add_chatroom_to_repo(name, options[:chatroom])
-      @announcer.successful_action("Repo \"#{name}\" notifications will be sent to chatroom \"#{options[:chatroom]}\"")
+
+      if chatroom = options[:chatroom]
+        @repo_agent.add_chatroom_to_repo(name, chatroom)
+        @announcer.successful_action("Repo \"#{name}\" notifications will be sent to chatroom \"#{chatroom}\"")
+      end
     end
   end
 end
