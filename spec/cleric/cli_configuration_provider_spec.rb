@@ -68,5 +68,18 @@ module Cleric
         config.hipchat_repo_api_token.should == 'REPO_API_TOKEN'
       end
     end
+
+    describe '#repo_agent' do
+      # Ensure `new` returns differing instances.
+      before(:each) { GitHubAgent.stub(:new).and_return(mock('Agent'), mock('Agent')) }
+
+      it 'creates a configured GitHub agent' do
+        GitHubAgent.should_receive(:new).with(config)
+        config.repo_agent
+      end
+      it 'returns the same object instance each time' do
+        config.repo_agent.should be(config.repo_agent)
+      end
+    end
   end
 end

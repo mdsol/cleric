@@ -15,6 +15,14 @@ module Cleric
       end
     end
 
+    it 'uses a single GitHub client across multiple calls' do
+      Octokit::Client.should_receive(:new).once
+      3.times do
+        agent.create_repo('my_org/my_repo')
+        agent.add_repo_to_team('my_org/my_repo', '1234')
+      end
+    end
+
     describe '#add_chatroom_to_repo' do
       before(:each) { config.stub(:hipchat_repo_api_token) { 'REPO_API_TOKEN' } }
       after(:each) { agent.add_chatroom_to_repo('my_org/my_repo', 'my_room') }
@@ -35,11 +43,16 @@ module Cleric
       end
     end
 
-    it 'uses a single GitHub client across multiple calls' do
-      Octokit::Client.should_receive(:new).once
-      3.times do
-        agent.create_repo('my_org/my_repo')
-        agent.add_repo_to_team('my_org/my_repo', '1234')
+    describe '#add_user_to_team' do
+      let(:listener) { mock('Listener').as_null_object }
+
+      after(:each) { agent.add_user_to_team('a_user', '1234', listener) }
+
+      it 'add the user to the team via the client' do
+        client.should_receive(:add_team_member).with(1234, 'a_user')
+      end
+      it 'announces success to the listener' do
+        listener.should_receive(:successful_action)
       end
     end
 
@@ -69,6 +82,33 @@ module Cleric
       it 'creates a private repo via the client' do
         client.should_receive(:create_repository)
           .with('my-repo', hash_including(organization: 'my-org', private: 'true'))
+      end
+    end
+
+    describe '#verify_user_public_email' do
+      let(:email) { 'user@example.com' }
+      let(:listener) { mock('Listener').as_null_object }
+
+      before(:each) { client.stub(:user) { mock('User', email: email) } }
+      after(:each) { agent.verify_user_public_email('a_user', 'user@example.com', listener) }
+
+      include_examples :client
+      it 'finds the user via the client' do
+        client.should_recieve(:user).with('a_user')
+      end
+
+      context 'when the user public email does not match' do
+        let(:email) { 'other_user@example.com' }
+
+        it 'calls the failure callback on the listener' do
+          listener.should_receive(:verify_user_public_email_failure)
+        end
+      end
+
+      context 'when the email matches' do
+        it 'does not call the failure callback' do
+          listener.should_not_receive(:verify_user_public_email_failure)
+        end
       end
     end
   end

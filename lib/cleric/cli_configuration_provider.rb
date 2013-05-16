@@ -40,6 +40,12 @@ module Cleric
       config['hipchat']['repo_api_token']
     end
 
+    # Returns a configured repo agent.
+    # @return [GitHubAgent] A GitHub repo agent.
+    def repo_agent
+      @repo_agent ||= GitHubAgent.new(self)
+    end
+
     private
 
     def ask(prompt)
