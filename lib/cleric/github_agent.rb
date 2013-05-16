@@ -41,6 +41,16 @@ module Cleric
       client.create_repository(repo_name, organization: org_name, private: 'true')
     end
 
+    # Removes the user from the organization.
+    # @param email [String] The email of the user.
+    # @param org [String] The name of the organization.
+    # @param listener [Object] The target of any callbacks.
+    def remove_user_from_org(email, org, listener)
+      user = client.search_users(email).first
+      client.remove_organization_member(org, user.username)
+      listener.successful_action("User \"#{user.username}\" (#{email}) removed from organization \"#{org}\"")
+    end
+
     # Verifies that the user's public email matches that given. On failure,
     # calls the `verify_user_public_email` method on the listener.
     # @param username [String] The user's username.

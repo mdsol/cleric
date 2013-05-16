@@ -22,15 +22,18 @@ describe 'Command line' do
 
   context 'under the "repo" command' do
     let(:cli_command) { 'repo' }
-    it 'has a "create <name>" command' do
+    it 'has a create command' do
       cli_help.should include('cleric repo create <name>')
     end
   end
 
   context 'under the "user" command' do
     let(:cli_command) { 'user' }
-    it 'has a "welcome <github-username>" command' do
+    it 'has a welcome command' do
       cli_help.should include('cleric user welcome <github-username>')
+    end
+    it 'has a remove command' do
+      cli_help.should include('cleric user remove <email>')
     end
   end
 end
@@ -106,24 +109,36 @@ module Cleric
 
     describe User do
       subject(:user) { Cleric::User.new }
+      let(:manager) { mock(UserManager).as_null_object }
 
-      describe '#create' do
-        let(:username) { 'my_github_username' }
-        let(:manager) { mock(UserManager).as_null_object }
+      before(:each) do
+        UserManager.stub(:new) { manager }
+      end
 
-        before(:each) do
-          UserManager.stub(:new) { manager }
-          stub_options_for(user, team: '1234', email: 'me@example.com')
-        end
-
-        after(:each) { user.welcome(username) }
-
-        include_examples :announcers
+      shared_examples :creates_user_manager do
         it 'creates a user manager configured with the agent' do
           UserManager.should_receive(:new).with(config, hipchat)
         end
-        it 'delegates creation to the manager' do
-          manager.should_receive(:welcome).with(username, 'me@example.com', '1234')
+      end
+
+      describe '#create' do
+        before(:each) { stub_options_for(user, team: '1234', email: 'me@example.com') }
+        after(:each) { user.welcome('a_username') }
+
+        include_examples :announcers
+        include_examples :creates_user_manager
+        it 'delegates welcome to the manager' do
+          manager.should_receive(:welcome).with('a_username', 'me@example.com', '1234')
+        end
+      end
+
+      describe '#remove' do
+        after(:each) { user.remove('a_user@example.com', 'an_org') }
+
+        include_examples :announcers
+        include_examples :creates_user_manager
+        it 'delegates removal to the manager' do
+          manager.should_receive(:remove).with('a_user@example.com', 'an_org')
         end
       end
     end

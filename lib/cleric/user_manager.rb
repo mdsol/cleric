@@ -5,6 +5,13 @@ module Cleric
       @listener = listener
     end
 
+    # Remove the user from the organization.
+    # @param email [String] The user's email.
+    # @param org [String] The name of the organization.
+    def remove(username, org)
+      repo_agent.remove_user_from_org(username, org, @listener)
+    end
+
     # Callback invoked on failure by the repo agent's #verify_user_public_email
     # method.
     def verify_user_public_email_failure
@@ -17,8 +24,6 @@ module Cleric
     # @param email [String] The user's email.
     # @param team [String] The numeric id of the team in the repo system.
     def welcome(username, email, team)
-      repo_agent = @config.repo_agent
-
       # Passing self as listener on verification, so on failure our own
       # #verify_user_public_email_failure method is called, hence the following
       # catch.
@@ -26,6 +31,10 @@ module Cleric
         repo_agent.verify_user_public_email(username, email, self)
         repo_agent.add_user_to_team(username, team, @listener)
       end
+    end
+
+    def repo_agent
+      @repo_agent ||= @config.repo_agent
     end
   end
 end

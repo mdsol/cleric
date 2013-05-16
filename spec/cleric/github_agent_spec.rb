@@ -6,6 +6,7 @@ module Cleric
     let(:config) { mock('ConfigProvider', github_credentials: credentials).as_null_object }
     let(:credentials) { { login: 'me', password: 'secret' } }
     let(:client) { mock('GitHubClient').as_null_object }
+    let(:listener) { mock('Listener').as_null_object }
 
     before(:each) { Octokit::Client.stub(:new) { client } }
 
@@ -85,9 +86,25 @@ module Cleric
       end
     end
 
+    describe '#remove_user_from_org' do
+      let(:users) { [ mock('User', username: 'a_user') ] }
+
+      before(:each) { client.stub(:search_users) { users } }
+      after(:each) { agent.remove_user_from_org('user@example.com', 'an_org', listener) }
+
+      it 'finds the user by their public email via the client' do
+        client.should_receive(:search_users).with('user@example.com')
+      end
+      it 'removes the user from the organization via the client' do
+        client.should_receive(:remove_organization_member).with('an_org', 'a_user')
+      end
+      it 'announces success to the listener' do
+        listener.should_receive(:successful_action)
+      end
+    end
+
     describe '#verify_user_public_email' do
       let(:email) { 'user@example.com' }
-      let(:listener) { mock('Listener').as_null_object }
 
       before(:each) { client.stub(:user) { mock('User', email: email) } }
       after(:each) { agent.verify_user_public_email('a_user', 'user@example.com', listener) }

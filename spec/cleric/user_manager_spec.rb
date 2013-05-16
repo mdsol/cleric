@@ -7,6 +7,14 @@ module Cleric
     let(:listener) { mock('Listener') }
     let(:repo_agent) { mock('RepoAgent').as_null_object }
 
+    describe '#remove' do
+      after(:each) { manager.remove('user@example.com', 'an_org') }
+
+      it 'tells the repo agent to remove the user from the org' do
+        repo_agent.should_receive(:remove_user_from_org).with('user@example.com', 'an_org', listener)
+      end
+    end
+
     describe '#welcome' do
       after(:each) { manager.welcome('a_user', 'user@example.com', 'a_team') }
 

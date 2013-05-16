@@ -33,14 +33,24 @@ module Cleric
   class User < Thor
     include CLIDefaults
 
+    desc 'remove <email> <organization>', 'Remove the user from all teams in the organization'
+    def remove(email, org)
+      manager.remove(email, org)
+    end
+
     desc 'welcome <github-username>', 'Add the existing user to a team and chat'
     option :email, required: true,
       desc: 'The user\'s email address'
     option :team, type: :numeric, required: true,
       desc: 'The team\'s numerical id'
     def welcome(username)
-      manager = UserManager.new(config, hipchat)
       manager.welcome(username, options[:email], options[:team])
+    end
+
+    private
+
+    def manager
+      manager = UserManager.new(config, hipchat)
     end
   end
 
