@@ -1,4 +1,7 @@
 module Cleric
+
+  # Provides services for managing GitHub using the given configuration.
+  # Notifies listeners of activities.
   class GitHubAgent
     def initialize(config)
       @config = config
@@ -11,7 +14,7 @@ module Cleric
       client.create_hook(
         repo, 'hipchat', auth_token: @config.hipchat_repo_api_token, room: chatroom
       )
-      listener.successful_action("Repo \"#{repo}\" notifications will be sent to chatroom \"#{chatroom}\"")
+      listener.chatroom_added_to_repo(repo, chatroom)
     end
 
     # Adds a GitHub repo to a team.
@@ -19,7 +22,7 @@ module Cleric
     # @param team [String] Numeric id of the team.
     def add_repo_to_team(repo, team, listener)
       client.add_team_repository(team.to_i, repo)
-      listener.successful_action("Repo \"#{repo}\" added to team \"#{team}\"")
+      listener.repo_added_to_team(repo, team)
     end
 
     # Adds a GitHub user to a team.
@@ -27,7 +30,7 @@ module Cleric
     # @param team [String] Numeric id of the team.
     def add_user_to_team(username, team, listener)
       client.add_team_member(team.to_i, username)
-      listener.successful_action("User \"#{username}\" added to team \"#{team}\"")
+      listener.user_added_to_team(username, team)
     end
 
     # Creates a GitHub authorization and saves it to the config.
@@ -41,7 +44,7 @@ module Cleric
     def create_repo(name, listener)
       org_name, repo_name = name.split('/')
       client.create_repository(repo_name, organization: org_name, private: 'true')
-      listener.successful_action("Repo \"#{name}\" created")
+      listener.repo_created(name)
     end
 
     # Removes the user from the organization.
@@ -51,7 +54,7 @@ module Cleric
     def remove_user_from_org(email, org, listener)
       user = client.search_users(email).first
       client.remove_organization_member(org, user.username)
-      listener.successful_action("User \"#{user.username}\" (#{email}) removed from organization \"#{org}\"")
+      listener.user_removed_from_org(user.username, email, org)
     end
 
     # Verifies that the user's public email matches that given. On failure,

@@ -34,7 +34,7 @@ module Cleric
           .with('my_org/my_repo', 'hipchat', room: 'my_room', auth_token: 'REPO_API_TOKEN')
       end
       it 'announces success to the listener' do
-        listener.should_receive(:successful_action)
+        listener.should_receive(:chatroom_added_to_repo).with('my_org/my_repo', 'my_room')
       end
     end
 
@@ -46,7 +46,7 @@ module Cleric
         client.should_receive(:add_team_repository).with(1234, 'my_org/my_repo')
       end
       it 'announces success to the listener' do
-        listener.should_receive(:successful_action)
+        listener.should_receive(:repo_added_to_team).with('my_org/my_repo', '1234')
       end
     end
 
@@ -59,7 +59,7 @@ module Cleric
         client.should_receive(:add_team_member).with(1234, 'a_user')
       end
       it 'announces success to the listener' do
-        listener.should_receive(:successful_action)
+        listener.should_receive(:user_added_to_team).with('a_user', '1234')
       end
     end
 
@@ -83,15 +83,15 @@ module Cleric
     end
 
     describe '#create_repo' do
-      after(:each) { agent.create_repo('my-org/my-repo', listener) }
+      after(:each) { agent.create_repo('my_org/my_repo', listener) }
 
       include_examples :client
       it 'creates a private repo via the client' do
         client.should_receive(:create_repository)
-          .with('my-repo', hash_including(organization: 'my-org', private: 'true'))
+          .with('my_repo', hash_including(organization: 'my_org', private: 'true'))
       end
       it 'announces success to the listener' do
-        listener.should_receive(:successful_action)
+        listener.should_receive(:repo_created).with('my_org/my_repo')
       end
     end
 
@@ -108,7 +108,8 @@ module Cleric
         client.should_receive(:remove_organization_member).with('an_org', 'a_user')
       end
       it 'announces success to the listener' do
-        listener.should_receive(:successful_action)
+        listener.should_receive(:user_removed_from_org)
+          .with('a_user', 'user@example.com', 'an_org')
       end
     end
 
