@@ -7,17 +7,19 @@ module Cleric
     # Adds chatroom notifications to a repo.
     # @param repo [String] Name of the repo, e.g. "my_org/my_repo".
     # @param chatroom [String] Name or id of the chatroom.
-    def add_chatroom_to_repo(repo, chatroom)
+    def add_chatroom_to_repo(repo, chatroom, listener)
       client.create_hook(
         repo, 'hipchat', auth_token: @config.hipchat_repo_api_token, room: chatroom
       )
+      listener.successful_action("Repo \"#{repo}\" notifications will be sent to chatroom \"#{chatroom}\"")
     end
 
     # Adds a GitHub repo to a team.
     # @param repo [String] Name of the repo, e.g. "my_org/my_repo".
     # @param team [String] Numeric id of the team.
-    def add_repo_to_team(repo, team)
+    def add_repo_to_team(repo, team, listener)
       client.add_team_repository(team.to_i, repo)
+      listener.successful_action("Repo \"#{repo}\" added to team \"#{team}\"")
     end
 
     # Adds a GitHub user to a team.
@@ -36,9 +38,10 @@ module Cleric
 
     # Creates a GitHub repo.
     # @param name [String] Name of the repo, e.g. "my_org/my_repo".
-    def create_repo(name)
+    def create_repo(name, listener)
       org_name, repo_name = name.split('/')
       client.create_repository(repo_name, organization: org_name, private: 'true')
+      listener.successful_action("Repo \"#{name}\" created")
     end
 
     # Removes the user from the organization.

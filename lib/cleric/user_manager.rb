@@ -1,4 +1,7 @@
 module Cleric
+
+  # Provides services for managing users. Coordinates activities between
+  # different service agents.
   class UserManager
     def initialize(config, listener)
       @config = config

@@ -1,8 +1,11 @@
 module Cleric
+
+  # Provides services for managing repos. Coordinates activities between
+  # different service agents.
   class RepoManager
-    def initialize(repo_agent, announcer)
+    def initialize(repo_agent, listener)
       @repo_agent = repo_agent
-      @announcer = announcer
+      @listener = listener
     end
 
     # Creates a repo.
@@ -10,14 +13,11 @@ module Cleric
     # @param team [String] Numerical id of the team.
     # @param options [Hash] Options, e.g. `{ chatroom: 'my_room' }`
     def create(name, team, options)
-      @repo_agent.create_repo(name)
-      @announcer.successful_action("Repo \"#{name}\" created")
-      @repo_agent.add_repo_to_team(name, team)
-      @announcer.successful_action("Repo \"#{name}\" added to team \"#{team}\"")
+      @repo_agent.create_repo(name, @listener)
+      @repo_agent.add_repo_to_team(name, team, @listener)
 
       if chatroom = options[:chatroom]
-        @repo_agent.add_chatroom_to_repo(name, chatroom)
-        @announcer.successful_action("Repo \"#{name}\" notifications will be sent to chatroom \"#{chatroom}\"")
+        @repo_agent.add_chatroom_to_repo(name, chatroom, @listener)
       end
     end
   end
