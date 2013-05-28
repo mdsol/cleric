@@ -14,18 +14,24 @@ commands such as:
 For any successful action, a configured HipChat room is notified, allowing other
 managers to see what's going on in your organization.
 
-Cleric has been designed to be extensible, so it should ultimately be possible
-to plug in other repo and chat services (assuming they have an adequate API) and
-provide other management notification mechanisms beyond HipChat.
+Cleric is intended to be extensible, so it should ultimately be possible to plug
+in other repo and chat services (assuming they have an adequate API) and provide
+other management notification mechanisms beyond HipChat.
 
 While Cleric currently provides a command line interface, the design is intended
 to be reusable with other interfaces, e.g. a web UI.
 
 ## Install
 
-Cleric is not yet available as a gem but should be soon. In the mean time, to
-install Cleric check out this repo and run the following command in the
-top-level directory:
+Cleric is available as a gem through GitHub, hence you'll need to add it to the
+`Gemfile` of an existing project or create a stub `Gemfile` to use it in
+isolation. Add the following line:
+
+```ruby
+gem 'cleric', git: 'git@github.com:mdsol/cleric.git'
+```
+
+Then run:
 
 ```
 bundle install
@@ -37,7 +43,7 @@ To use the Cleric from the command line, run this command in the top directory
 for help:
 
 ```
-./bin/cleric help
+[bundle exec] cleric help
 ```
 
 ## Configure
@@ -72,7 +78,7 @@ By default, Cleric will prompt for your GitHub login and password on each
 invocation. You can avoid this be running the following command:
 
 ```
-./bin/cleric auth
+[bundle exec] cleric auth
 ```
 
 You will be prompted for your login and password one last time but then an API
