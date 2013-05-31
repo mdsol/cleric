@@ -10,6 +10,7 @@ commands such as:
 * Remove a GitHub user from an organization
 * Create a GitHub repo, assign it to a team and hook up repo notifications to
   HipChat *all at once*
+* Audit a local repo to ensure all commits are covered by pull requests
 
 For any successful action, a configured HipChat room is notified, allowing other
 managers to see what's going on in your organization.
