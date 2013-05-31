@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'ansi', '~> 1.4'
   s.add_dependency 'hipchat-api', '~> 1.0'
+  s.add_dependency 'git', '~> 1.2'
   s.add_dependency 'octokit', '~> 1.24'
   s.add_dependency 'thor', '~> 0.18'
 end
