@@ -95,6 +95,23 @@ module Cleric
       end
     end
 
+    describe '#repo_pull_request_ranges' do
+      let(:pull_request) { stub('PullRequest', base: base_commit, head: head_commit) }
+      let(:base_commit) { stub('Commit', sha: '123') }
+      let(:head_commit) { stub('Commit', sha: '456') }
+
+      before(:each) { client.stub(:pull_requests) { [pull_request] } }
+
+      it 'gets all the closed pull requests' do
+        client.should_receive(:pull_requests).with('my_org/my_repo', 'closed')
+        agent.repo_pull_request_ranges('my_org/my_repo')
+      end
+      it 'returns the base and head commit SHA hashes' do
+        returned = agent.repo_pull_request_ranges('my_org/my_repo')
+        returned.should == [ { base: '123', head: '456' } ]
+      end
+    end
+
     describe '#remove_user_from_org' do
       let(:users) { [ mock('User', username: 'a_user') ] }
 

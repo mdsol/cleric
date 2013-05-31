@@ -10,8 +10,17 @@ module Cleric
       write_success("Repo \"#{repo}\" notifications will be sent to chatroom \"#{chatroom}\"")
     end
 
+    def commits_without_pull_requests(repo, commits)
+      write_warning("Repo \"#{repo}\" has the following commits not covered by pull requests:\n" +
+        commits.join("\n"))
+    end
+
     def repo_added_to_team(repo, team)
       write_success("Repo \"#{repo}\" added to team \"#{team}\"")
+    end
+
+    def repo_audit_passed(repo)
+      write_success("Repo \"#{repo}\" passed audit")
     end
 
     def repo_created(repo)
@@ -30,6 +39,10 @@ module Cleric
 
     def write_success(message)
       @io.puts(green { message })
+    end
+
+    def write_warning(message)
+      @io.puts(red { message })
     end
   end
 end

@@ -47,6 +47,12 @@ module Cleric
       listener.repo_created(name)
     end
 
+    # Returns an array of hashes with `:base` and `:head` commit SHA hashes for
+    # every pull request in the named repo.
+    def repo_pull_request_ranges(repo)
+      client.pull_requests(repo, 'closed').map {|pr| { base: pr.base.sha, head: pr.head.sha } }
+    end
+
     # Removes the user from the organization.
     # @param email [String] The email of the user.
     # @param org [String] The name of the organization.
