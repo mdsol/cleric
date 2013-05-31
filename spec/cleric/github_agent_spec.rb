@@ -12,7 +12,7 @@ module Cleric
 
     shared_examples :client do
       it 'creates a GitHub client with the configured credentials' do
-        Octokit::Client.should_receive(:new).with(credentials)
+        Octokit::Client.should_receive(:new).with(credentials.merge(auto_traversal: true))
       end
     end
 

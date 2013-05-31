@@ -74,7 +74,7 @@ module Cleric
     end
 
     def create_client
-      client = Octokit::Client.new(credentials)
+      client = Octokit::Client.new(credentials.merge(auto_traversal: true))
     end
 
     def credentials
