@@ -17,11 +17,12 @@ module Cleric
       ranges = repo_agent.repo_pull_request_ranges(name)
       ranges.each do |range|
         commits_with_pr.merge(
-          git.log.between(range[:base], range[:head]).map {|commit| commit.sha }
+          git.log(nil).between(range[:base], range[:head]).map {|commit| commit.sha }
         )
       end
 
-      commits_without_pr = git.log
+      # Passing `nil` to `log` to ensure all commits are returned.
+      commits_without_pr = git.log(nil)
         .select {|commit| commit.parents.size == 1 && !commits_with_pr.include?(commit.sha) }
         .map {|commit| commit.sha }
 

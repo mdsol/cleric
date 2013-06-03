@@ -29,6 +29,8 @@ module Cleric
         Git.should_receive(:open).with('.')
       end
       it 'gets the list of commits in each range from the local repo via the client' do
+        # Expecting three log accesses, one for each range and one for all commits.
+        client.should_receive(:log).with(nil).at_least(3).times
         log.should_receive(:between).with('b', 'd')
         log.should_receive(:between).with('f', 'h')
       end
