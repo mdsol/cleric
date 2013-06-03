@@ -96,9 +96,14 @@ module Cleric
     end
 
     describe '#repo_pull_request_ranges' do
-      let(:pull_request) { stub('PullRequest', base: base_commit, head: head_commit) }
-      let(:base_commit) { stub('Commit', sha: '123') }
-      let(:head_commit) { stub('Commit', sha: '456') }
+      let(:pull_request) do
+        stub('PullRequest',
+          merged_at: merged_at,
+          base: stub('Commit', sha: '123').as_null_object,
+          head: stub('Commit', sha: '456').as_null_object
+        ).as_null_object
+      end
+      let(:merged_at) { 'some time' }
 
       before(:each) { client.stub(:pull_requests) { [pull_request] } }
 
@@ -109,6 +114,15 @@ module Cleric
       it 'returns the base and head commit SHA hashes' do
         returned = agent.repo_pull_request_ranges('my_org/my_repo')
         returned.should == [ { base: '123', head: '456' } ]
+      end
+
+      context 'when encountering a pull request that has not been merged' do
+        let(:merged_at) { nil }
+
+        it 'does not return that pull request' do
+          returned = agent.repo_pull_request_ranges('my_org/my_repo')
+          returned.should be_empty
+        end
       end
     end
 
