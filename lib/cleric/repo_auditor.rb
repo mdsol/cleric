@@ -1,6 +1,9 @@
 require 'set'
 
 module Cleric
+
+  # Provides services for auditing repositories. Coordinates activities between
+  # local repositories and different service agents, e.g. GitHub.
   class RepoAuditor
     def initialize(config, listener)
       @config = config
