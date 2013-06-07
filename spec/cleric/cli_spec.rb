@@ -25,6 +25,9 @@ describe 'Command line' do
     it 'has a create command' do
       cli_help.should include('cleric repo create <name>')
     end
+    it 'has an audit command' do
+      cli_help.should include('cleric repo audit <name>')
+    end
   end
 
   context 'under the "user" command' do
@@ -103,6 +106,23 @@ module Cleric
         end
         it 'delegates creation to the manager' do
           manager.should_receive(:create).with(name, '1234', hash_including(chatroom: 'my_room'))
+        end
+      end
+
+      describe '#audit' do
+        let(:auditor) { mock(RepoAuditor).as_null_object }
+
+        before(:each) { RepoAuditor.stub(:new) { auditor } }
+        after(:each) { repo.audit('my/repo') }
+
+        it 'creates a console announcer' do
+          ConsoleAnnouncer.should_receive(:new).with($stdout)
+        end
+        it 'creates a configured repo auditor' do
+          RepoAuditor.should_receive(:new).with(config, console)
+        end
+        it 'delegates to the auditor' do
+          auditor.should_receive(:audit_repo).with('my/repo')
         end
       end
     end

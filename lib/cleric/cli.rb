@@ -19,6 +19,12 @@ module Cleric
   class Repo < Thor
     include CLIDefaults
 
+    desc 'audit <name>', 'Audit the repo for stray commits'
+    def audit(name)
+      auditor = RepoAuditor.new(config, console)
+      auditor.audit_repo(name)
+    end
+
     desc 'create <name>', 'Create the repo <name> and assign a team'
     option :team, type: :numeric, required: true,
       desc: 'The team\'s numerical id'
