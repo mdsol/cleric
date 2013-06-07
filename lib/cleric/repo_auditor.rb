@@ -15,11 +15,10 @@ module Cleric
     # local copy of the repo.
     def audit_repo(name)
       git = Git.open('.')
-      commits_with_pr = Set.new
-
       ranges = repo_agent.repo_pull_request_ranges(name)
-      ranges.each do |range|
-        commits_with_pr.merge(
+
+      commits_with_pr = ranges.inject(Set.new) do |set, range|
+        set.merge(
           git.log(nil).between(range[:base], range[:head]).map {|commit| commit.sha }
         )
       end
