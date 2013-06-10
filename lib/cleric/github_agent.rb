@@ -47,6 +47,14 @@ module Cleric
       listener.repo_created(name)
     end
 
+    # Returns an array of hashes with `:base` and `:head` commit SHA hashes for
+    # every merged pull request in the named repo.
+    def repo_pull_request_ranges(repo)
+      client.pull_requests(repo, 'closed')
+        .reject {|request| request.merged_at.nil? }
+        .map {|request| { base: request.base.sha, head: request.head.sha } }
+    end
+
     # Removes the user from the organization.
     # @param email [String] The email of the user.
     # @param org [String] The name of the organization.
@@ -74,7 +82,7 @@ module Cleric
     end
 
     def create_client
-      client = Octokit::Client.new(credentials)
+      client = Octokit::Client.new(credentials.merge(auto_traversal: true))
     end
 
     def credentials

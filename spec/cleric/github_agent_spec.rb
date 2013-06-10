@@ -12,7 +12,7 @@ module Cleric
 
     shared_examples :client do
       it 'creates a GitHub client with the configured credentials' do
-        Octokit::Client.should_receive(:new).with(credentials)
+        Octokit::Client.should_receive(:new).with(credentials.merge(auto_traversal: true))
       end
     end
 
@@ -92,6 +92,37 @@ module Cleric
       end
       it 'announces success to the listener' do
         listener.should_receive(:repo_created).with('my_org/my_repo')
+      end
+    end
+
+    describe '#repo_pull_request_ranges' do
+      let(:pull_request) do
+        stub('PullRequest',
+          merged_at: merged_at,
+          base: stub('Commit', sha: '123').as_null_object,
+          head: stub('Commit', sha: '456').as_null_object
+        ).as_null_object
+      end
+      let(:merged_at) { 'some time' }
+
+      before(:each) { client.stub(:pull_requests) { [pull_request] } }
+
+      it 'gets all the closed pull requests' do
+        client.should_receive(:pull_requests).with('my_org/my_repo', 'closed')
+        agent.repo_pull_request_ranges('my_org/my_repo')
+      end
+      it 'returns the base and head commit SHA hashes' do
+        returned = agent.repo_pull_request_ranges('my_org/my_repo')
+        returned.should == [ { base: '123', head: '456' } ]
+      end
+
+      context 'when encountering a pull request that has not been merged' do
+        let(:merged_at) { nil }
+
+        it 'does not return that pull request' do
+          returned = agent.repo_pull_request_ranges('my_org/my_repo')
+          returned.should be_empty
+        end
       end
     end
 
