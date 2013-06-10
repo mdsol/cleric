@@ -20,5 +20,10 @@ module Cleric
         @repo_agent.add_chatroom_to_repo(name, chatroom, @listener)
       end
     end
+
+    # Updates an existing repo. Options must include `{ chatroom: 'my_room' }`.
+    def update(name, options)
+      @repo_agent.add_chatroom_to_repo(name, options[:chatroom], @listener)
+    end
   end
 end

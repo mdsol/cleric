@@ -22,11 +22,14 @@ describe 'Command line' do
 
   context 'under the "repo" command' do
     let(:cli_command) { 'repo' }
+    it 'has an audit command' do
+      cli_help.should include('cleric repo audit <name>')
+    end
     it 'has a create command' do
       cli_help.should include('cleric repo create <name>')
     end
-    it 'has an audit command' do
-      cli_help.should include('cleric repo audit <name>')
+    it 'has an update command' do
+      cli_help.should include('cleric repo update <name>')
     end
   end
 
@@ -123,6 +126,27 @@ module Cleric
         end
         it 'delegates to the auditor' do
           auditor.should_receive(:audit_repo).with('my/repo')
+        end
+      end
+
+      describe '#update' do
+        let(:name) { 'example_name' }
+        let(:manager) { mock(RepoManager).as_null_object }
+
+        before(:each) do
+          RepoManager.stub(:new) { manager }
+          stub_options_for(repo, chatroom: 'my_room')
+        end
+
+        after(:each) { repo.update(name) }
+
+        include_examples :github_agent_user
+        include_examples :announcers
+        it 'creates a repo manager configured with the agent' do
+          RepoManager.should_receive(:new).with(agent, hipchat)
+        end
+        it 'delegates creation to the manager' do
+          manager.should_receive(:update).with(name, hash_including(chatroom: 'my_room'))
         end
       end
     end

@@ -30,5 +30,12 @@ module Cleric
         end
       end
     end
+
+    describe '#update' do
+      it 'tells the agent to add chatroom notification to the repo' do
+        repo_agent.should_receive(:add_chatroom_to_repo).with('my_org/my_repo', 'my_room', listener)
+        manager.update('my_org/my_repo', chatroom: 'my_room')
+      end
+    end
   end
 end
