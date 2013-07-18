@@ -28,6 +28,12 @@ module Cleric
       it 'opens a client for the local repo' do
         Git.should_receive(:open).with('.')
       end
+      it 'notifies the listener that latest changes are being fetched' do
+        listener.should_receive(:repo_fetching_latest_changes)
+      end
+      it 'fetches the latest changes for the local repo' do
+        client.should_receive(:fetch)
+      end
       it 'gets the list of commits in each range from the local repo via the client' do
         # Expecting three log accesses, one for each range and one for all commits.
         client.should_receive(:log).with(nil).at_least(3).times

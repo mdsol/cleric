@@ -27,6 +27,10 @@ module Cleric
       write_success(%Q[Repo "#{repo}" created])
     end
 
+    def repo_fetching_latest_changes
+      write_action("Fetching latest changes for local repo")
+    end
+
     def user_added_to_team(username, team)
       write_success(%Q[User "#{username}" added to team "#{team}"])
     end
@@ -36,6 +40,10 @@ module Cleric
     end
 
     private
+
+    def write_action(message)
+      @io.puts(message)
+    end
 
     def write_success(message)
       @io.puts(green { message })
