@@ -10,7 +10,11 @@ module Cleric
 
       it 'sends the message to the configured IO object' do
         colorizer = opts[:color] || 'green'
-        io.should_receive(:puts).with(ANSI::Code.send(colorizer) { opts[:message] })
+        if colorizer == 'white'
+          io.should_receive(:puts).with(opts[:message])
+        else
+          io.should_receive(:puts).with(ANSI::Code.send(colorizer) { opts[:message] })
+        end
       end
     end
 
@@ -44,6 +48,13 @@ module Cleric
       it_behaves_like 'an announcing method', :repo_created,
         args: ['a_repo'],
         message: 'Repo "a_repo" created'
+    end
+
+    describe '#repo_fetching_latest_changes' do
+      it_behaves_like 'an announcing method', :repo_fetching_latest_changes,
+        args: [],
+        message: 'Fetching latest changes for local repo',
+        color: 'white'
     end
 
     describe '#user_added_to_team' do
