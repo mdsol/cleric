@@ -15,6 +15,10 @@ module Cleric
     # local copy of the repo.
     def audit_repo(name)
       git = Git.open('.')
+
+      @listener.repo_fetching_latest_changes
+      git.fetch
+
       ranges = repo_agent.repo_pull_request_ranges(name)
 
       commits_with_pr = ranges.inject(Set.new) do |set, range|
