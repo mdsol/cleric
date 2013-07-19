@@ -56,6 +56,21 @@ module Cleric
           listener.should_not_receive(:commits_without_pull_requests)
         end
       end
+
+      context 'when a given range no longer exists in the local repo' do
+        let(:ranges) { [{ base: 'p', head: 'q' }, { base: 'a', head: 'i' }] }
+
+        before(:each) do
+          log.stub(:between).with('p', 'q') { raise 'git log error' }
+        end
+
+        it 'notifies the listener of an obsolete range' do
+          listener.should_receive(:repo_obsolete_pull_request).with('p', 'q')
+        end
+        it 'continues execution normally' do
+          listener.should_receive(:repo_audit_passed).with('my/repo')
+        end
+      end
     end
   end
 end

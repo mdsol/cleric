@@ -57,6 +57,13 @@ module Cleric
         color: 'white'
     end
 
+    describe '#repo_obsolete_pull_request' do
+      it_behaves_like 'an announcing method', :repo_obsolete_pull_request,
+        args: ['abc', 'def'],
+        message: %Q[Commits abc..def in pull request are no longer present in the repo],
+        color: 'yellow'
+    end
+
     describe '#user_added_to_team' do
       it_behaves_like 'an announcing method', :user_added_to_team,
         args: ['a_user', 'a_team'],

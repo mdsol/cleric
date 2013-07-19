@@ -11,7 +11,7 @@ module Cleric
     end
 
     def commits_without_pull_requests(repo, commits)
-      write_warning(%Q[Repo "#{repo}" has the following commits not covered by pull requests:\n] +
+      write_failure(%Q[Repo "#{repo}" has the following commits not covered by pull requests:\n] +
         commits.join("\n"))
     end
 
@@ -31,6 +31,10 @@ module Cleric
       write_action("Fetching latest changes for local repo")
     end
 
+    def repo_obsolete_pull_request(base, head)
+      write_warning(%Q[Commits #{base}..#{head} in pull request are no longer present in the repo])
+    end
+
     def user_added_to_team(username, team)
       write_success(%Q[User "#{username}" added to team "#{team}"])
     end
@@ -45,12 +49,16 @@ module Cleric
       @io.puts(message)
     end
 
+    def write_failure(message)
+      @io.puts(red { message })
+    end
+
     def write_success(message)
       @io.puts(green { message })
     end
 
     def write_warning(message)
-      @io.puts(red { message })
+      @io.puts(yellow { message })
     end
   end
 end
