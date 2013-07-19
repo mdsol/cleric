@@ -70,6 +70,13 @@ module Cleric
         message: 'User "a_user" added to team "a_team"'
     end
 
+    describe '#user_not_found' do
+      it_behaves_like 'an announcing method', :user_not_found,
+        args: ['user@example.com'],
+        message: 'User "user@example.com" not found',
+        color: 'red'
+    end
+
     describe '#user_removed_from_org' do
       it_behaves_like 'an announcing method', :user_removed_from_org,
         args: ['a_user', 'user@example.com', 'an_org'],

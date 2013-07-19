@@ -143,6 +143,17 @@ module Cleric
         listener.should_receive(:user_removed_from_org)
           .with('a_user', 'user@example.com', 'an_org')
       end
+
+      context 'when the user is not found' do
+        let(:users) { [] }
+
+        it 'notifies the listener of the failure' do
+          listener.should_receive(:user_not_found).with('user@example.com')
+        end
+        it 'does not notify the listener of success' do
+          listener.should_not_receive(:user_removed_from_org)
+        end
+      end
     end
 
     describe '#verify_user_public_email' do

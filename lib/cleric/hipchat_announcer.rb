@@ -25,6 +25,10 @@ module Cleric
       send_message(%Q[User "#{username}" added to team "#{team}"])
     end
 
+    def user_not_found(email)
+      @listener.user_not_found(email)
+    end
+
     def user_removed_from_org(username, email, org)
       @listener.user_removed_from_org(username, email, org)
       send_message(%Q[User "#{username}" (#{email}) removed from organization "#{org}"], :red)

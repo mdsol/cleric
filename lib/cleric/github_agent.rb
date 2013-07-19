@@ -67,8 +67,12 @@ module Cleric
     # @param listener [Object] The target of any callbacks.
     def remove_user_from_org(email, org, listener)
       user = client.search_users(email).first
-      client.remove_organization_member(org, user.username)
-      listener.user_removed_from_org(user.username, email, org)
+      if user
+        client.remove_organization_member(org, user.username)
+        listener.user_removed_from_org(user.username, email, org)
+      else
+        listener.user_not_found(email)
+      end
     end
 
     # Verifies that the user's public email matches that given. On failure,
