@@ -100,7 +100,8 @@ module Cleric
         stub('PullRequest',
           merged_at: merged_at,
           base: stub('Commit', sha: '123').as_null_object,
-          head: stub('Commit', sha: '456').as_null_object
+          head: stub('Commit', sha: '456').as_null_object,
+          number: '789'
         ).as_null_object
       end
       let(:merged_at) { 'some time' }
@@ -113,7 +114,7 @@ module Cleric
       end
       it 'returns the base and head commit SHA hashes' do
         returned = agent.repo_pull_request_ranges('my_org/my_repo')
-        returned.should == [ { base: '123', head: '456' } ]
+        returned.should == [ { base: '123', head: '456', pr_number: '789' } ]
       end
 
       context 'when encountering a pull request that has not been merged' do
