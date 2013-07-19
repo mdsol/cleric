@@ -22,9 +22,7 @@ module Cleric
       ranges = repo_agent.repo_pull_request_ranges(name)
 
       commits_with_pr = ranges.inject(Set.new) do |set, range|
-        set.merge(
-          git.log(nil).between(range[:base], range[:head]).map {|commit| commit.sha }
-        )
+        set.merge(commits_in_range(git, range))
       end
 
       # Passing `nil` to `log` to ensure all commits are returned.
@@ -43,6 +41,15 @@ module Cleric
 
     def repo_agent
       @repo_agent ||= @config.repo_agent
+    end
+
+    def commits_in_range(git, range)
+      begin
+        git.log(nil).between(range[:base], range[:head]).map {|commit| commit.sha }
+      rescue StandardError => e
+        @listener.repo_obsolete_pull_request(range[:pr_number], range[:base], range[:head])
+        []
+      end
     end
   end
 end
