@@ -59,8 +59,8 @@ module Cleric
 
     describe '#repo_obsolete_pull_request' do
       it_behaves_like 'an announcing method', :repo_obsolete_pull_request,
-        args: ['abc', 'def'],
-        message: %Q[Commits abc..def in pull request are no longer present in the repo],
+        args: ['123', 'abc', 'def'],
+        message: %Q[Commits abc..def in pull request 123 are no longer present in the repo],
         color: 'yellow'
     end
 

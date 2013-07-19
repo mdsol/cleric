@@ -52,7 +52,13 @@ module Cleric
     def repo_pull_request_ranges(repo)
       client.pull_requests(repo, 'closed')
         .reject {|request| request.merged_at.nil? }
-        .map {|request| { base: request.base.sha, head: request.head.sha } }
+        .map do |request|
+          {
+            base: request.base.sha,
+            head: request.head.sha,
+            pr_number: request.number
+          }
+        end
     end
 
     # Removes the user from the organization.

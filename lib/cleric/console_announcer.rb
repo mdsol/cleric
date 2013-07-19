@@ -31,8 +31,8 @@ module Cleric
       write_action("Fetching latest changes for local repo")
     end
 
-    def repo_obsolete_pull_request(base, head)
-      write_warning(%Q[Commits #{base}..#{head} in pull request are no longer present in the repo])
+    def repo_obsolete_pull_request(pr_number, base, head)
+      write_warning(%Q[Commits #{base}..#{head} in pull request #{pr_number} are no longer present in the repo])
     end
 
     def user_added_to_team(username, team)

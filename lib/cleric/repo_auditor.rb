@@ -47,7 +47,7 @@ module Cleric
       begin
         git.log(nil).between(range[:base], range[:head]).map {|commit| commit.sha }
       rescue StandardError => e
-        @listener.repo_obsolete_pull_request(range[:base], range[:head])
+        @listener.repo_obsolete_pull_request(range[:pr_number], range[:base], range[:head])
         []
       end
     end
