@@ -48,6 +48,13 @@ module Cleric
         message: 'User "a_user" added to team "a_team"'
     end
 
+    describe '#user_not_found' do
+      it 'sends the message to upstream listener' do
+        listener.should_receive(:user_not_found).with('user@example.com')
+        announcer.user_not_found('user@example.com')
+      end
+    end
+
     describe '#user_removed_from_org' do
       it_behaves_like :announcing_method, :user_removed_from_org,
         args: ['a_user', 'user@example.com', 'an_org'],
