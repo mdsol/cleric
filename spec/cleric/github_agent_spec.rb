@@ -7,7 +7,7 @@ module Cleric
     let(:credentials) { { login: 'me', password: 'secret' } }
     let(:client) { mock('GitHubClient').as_null_object }
     let(:listener) { mock('Listener').as_null_object }
-
+    
     before(:each) { Octokit::Client.stub(:new) { client } }
 
     shared_examples :client do
@@ -23,7 +23,14 @@ module Cleric
         agent.add_repo_to_team('my_org/my_repo', '1234', listener)
       end
     end
-
+    
+    describe '#login' do
+      it 'returns the client login id' do
+        client.stub(:user) { {login: 'user'} }
+        expect(agent.login).to eq('user')
+      end
+    end
+    
     describe '#add_chatroom_to_repo' do
       before(:each) { config.stub(:hipchat_repo_api_token) { 'REPO_API_TOKEN' } }
       after(:each) { agent.add_chatroom_to_repo('my_org/my_repo', 'my_room', listener) }

@@ -12,7 +12,7 @@ module Cleric
       @console ||= ConsoleAnnouncer.new($stdout)
     end
     def hipchat
-      @hipchat ||= HipChatAnnouncer.new(config, console)
+      @hipchat ||= HipChatAnnouncer.new(config, console, github.login)
     end
   end
 
