@@ -1,8 +1,9 @@
 module Cleric
   class HipChatAnnouncer
-    def initialize(config, listener)
+    def initialize(config, listener, user)
       @config = config
       @listener = listener
+      @user = user
     end
 
     def chatroom_added_to_repo(repo, chatroom)
@@ -42,7 +43,7 @@ module Cleric
 
     def send_message(description, color = :green)
       hipchat.rooms_message(
-        @config.hipchat_announcement_room_id, 'Cleric', description, 0, color.to_s, 'text'
+        @config.hipchat_announcement_room_id, 'Cleric', %Q[Admin "#{@user}": #{description}], 0, color.to_s, 'text'
       )
     end
   end

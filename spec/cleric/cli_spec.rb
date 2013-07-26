@@ -56,7 +56,7 @@ module Cleric
     let(:agent) { mock('GitHub').as_null_object }
     let(:console) { mock(ConsoleAnnouncer) }
     let(:hipchat) { mock(HipChatAnnouncer) }
-
+    
     before(:each) do
       CLIConfigurationProvider.stub(:new) { config }
       GitHubAgent.stub(:new) { agent }
@@ -75,7 +75,7 @@ module Cleric
         ConsoleAnnouncer.should_receive(:new).with($stdout)
       end
       it 'creates a HipChat console decorating the console announcer' do
-        HipChatAnnouncer.should_receive(:new).with(config, console)
+        HipChatAnnouncer.should_receive(:new).with(config, console, agent.login)
       end
     end
 

@@ -85,6 +85,12 @@ module Cleric
       listener.verify_user_public_email_failure unless user.email == email
     end
 
+    # Returns the user login (from the GitHub client, rather than from the 
+    # stored login)
+    def login
+      client.user()[:login]
+    end
+
     private
 
     def client
