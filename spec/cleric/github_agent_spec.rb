@@ -7,7 +7,6 @@ module Cleric
     let(:credentials) { { login: 'me', password: 'secret' } }
     let(:client) { mock('GitHubClient').as_null_object }
     let(:listener) { mock('Listener').as_null_object }
-    let(:user) {{login: 'me'}}
     
     before(:each) { Octokit::Client.stub(:new) { client } }
 
@@ -27,8 +26,8 @@ module Cleric
     
     describe '#login' do
       it 'returns the client login id' do
-        client.should_receive(:user)
-        agent.login
+        client.stub(:user) { {login: 'user'} }
+        expect(agent.login).to eq('user')
       end
     end
     
