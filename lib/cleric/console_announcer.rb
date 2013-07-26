@@ -39,6 +39,10 @@ module Cleric
       write_success(%Q[User "#{username}" added to team "#{team}"])
     end
 
+    def user_not_found(email)
+      write_failure(%Q[User "#{email}" not found])
+    end
+
     def user_removed_from_org(username, email, org)
       write_success(%Q[User "#{username}" (#{email}) removed from organization "#{org}"])
     end
