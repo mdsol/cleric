@@ -10,7 +10,7 @@ module Cleric
       if github = config['github']
         { login: github['login'], oauth_token: github['oauth_token'] }
       else
-        { login: ask("GitHub login"), password: ask("GitHub password") }
+        { login: ask("GitHub login"), password: ask("GitHub password", silent: true) }
       end
     end
 
@@ -48,9 +48,14 @@ module Cleric
 
     private
 
-    def ask(prompt)
+    def ask(prompt, options={})
       $stdout.print "#{prompt}: "
-      $stdin.readline.chomp
+      if options[:silent]
+        require 'io/console'
+        $stdin.noecho {|io| io.readline}
+      else
+        $stdin.readline
+      end.chomp
     end
 
     def config

@@ -112,4 +112,5 @@ hipchat:
 
 * [Andrew Smith](https://github.com/asmith-mdsol)
 * [Geoff Low](https://github.com/glow-mdsol)
+* [Harry Wilkinson](https://github.com/harryw)
 
