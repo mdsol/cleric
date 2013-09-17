@@ -8,22 +8,34 @@ module Cleric
       @listener = listener
     end
 
-    # Creates a repo.
-    # @param name [String] Name of the repo, e.g. "my_org/my_repo".
-    # @param team [String] Numerical id of the team.
-    # @param options [Hash] Options, e.g. `{ chatroom: 'my_room' }`
     def create(name, team, options)
       @repo_agent.create_repo(name, @listener)
-      @repo_agent.add_repo_to_team(name, team, @listener)
 
-      if chatroom = options[:chatroom]
-        @repo_agent.add_chatroom_to_repo(name, chatroom, @listener)
-      end
+      add_team(name, team)
+      optionally_add_chatroom(name, options)
     end
 
-    # Updates an existing repo. Options must include `{ chatroom: 'my_room' }`.
     def update(name, options)
-      @repo_agent.add_chatroom_to_repo(name, options[:chatroom], @listener)
+      optionally_add_team(name, options)
+      optionally_add_chatroom(name, options)
+    end
+
+    private
+
+    def add_chatroom(repo_name, chatroom)
+      @repo_agent.add_chatroom_to_repo(repo_name, chatroom, @listener)
+    end
+
+    def add_team(repo_name, team)
+      @repo_agent.add_repo_to_team(repo_name, team, @listener)
+    end
+
+    def optionally_add_chatroom(repo_name, options)
+      add_chatroom(repo_name, options[:chatroom]) if options[:chatroom]
+    end
+
+    def optionally_add_team(repo_name, options)
+      add_team(repo_name, options[:team].to_i) if options[:team]
     end
   end
 end
