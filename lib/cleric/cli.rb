@@ -32,15 +32,17 @@ module Cleric
       desc: 'Send repo notifications to the chatroom with this name or id'
     def create(name)
       manager = RepoManager.new(github, hipchat)
-      manager.create(name, options[:team], chatroom: options[:chatroom])
+      manager.create(name, options[:team], options)
     end
 
     desc 'update <name>', 'Update the repo <name>'
-    option :chatroom, type: :string, required: true,
+    option :chatroom, type: :string,
       desc: 'Send repo notifications to the chatroom with this name or id'
+    option :team, type: :numeric,
+      desc: 'The team\'s numerical id'
     def update(name)
       manager = RepoManager.new(github, hipchat)
-      manager.update(name, chatroom: options[:chatroom])
+      manager.update(name, options)
     end
   end
 

@@ -46,17 +46,11 @@ end
 
 module Cleric
   describe CLI do
-    def stub_options_for(obj, options)
-      # Thor classes access their options through the `option` method so the
-      # only option (pun intended) is to mock as follows.
-      obj.stub_chain(:options, :[]) { |opt| options[opt] }
-    end
-
     let(:config) { mock('Config') }
     let(:agent) { mock('GitHub').as_null_object }
     let(:console) { mock(ConsoleAnnouncer) }
     let(:hipchat) { mock(HipChatAnnouncer) }
-    
+
     before(:each) do
       CLIConfigurationProvider.stub(:new) { config }
       GitHubAgent.stub(:new) { agent }
@@ -97,7 +91,7 @@ module Cleric
 
         before(:each) do
           RepoManager.stub(:new) { manager }
-          stub_options_for(repo, team: '1234', chatroom: 'my_room')
+          repo.options = { team: '1234', chatroom: 'my_room' }
         end
 
         after(:each) { repo.create(name) }
@@ -132,10 +126,11 @@ module Cleric
       describe '#update' do
         let(:name) { 'example_name' }
         let(:manager) { mock(RepoManager).as_null_object }
+        let(:options) { { chatroom: 'my_room' } }
 
         before(:each) do
           RepoManager.stub(:new) { manager }
-          stub_options_for(repo, chatroom: 'my_room')
+          repo.options = options
         end
 
         after(:each) { repo.update(name) }
@@ -147,6 +142,14 @@ module Cleric
         end
         it 'delegates creation to the manager' do
           manager.should_receive(:update).with(name, hash_including(chatroom: 'my_room'))
+        end
+
+        context 'when given a team option' do
+          let(:options) { { chatroom: 'my_room', team: '1234' } }
+
+          it 'delegates creation to the manager' do
+            manager.should_receive(:update).with(name, hash_including(team: '1234'))
+          end
         end
       end
     end
@@ -166,7 +169,7 @@ module Cleric
       end
 
       describe '#create' do
-        before(:each) { stub_options_for(user, team: '1234', email: 'me@example.com') }
+        before(:each) { user.options = { team: '1234', email: 'me@example.com' } }
         after(:each) { user.welcome('a_username') }
 
         include_examples :announcers

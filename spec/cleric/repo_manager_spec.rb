@@ -17,11 +17,13 @@ module Cleric
       it 'tells the agent to add the repo to the team' do
         repo_agent.should_receive(:add_repo_to_team).with('my_org/my_repo', 123, listener)
       end
+
       context 'when passed a chatroom' do
         it 'tells the agent to add chatroom notification to the repo' do
           repo_agent.should_receive(:add_chatroom_to_repo).with('my_org/my_repo', 'my_room', listener)
         end
       end
+
       context 'when passed a nil chatroom' do
         let(:chatroom) { nil }
 
@@ -32,9 +34,36 @@ module Cleric
     end
 
     describe '#update' do
-      it 'tells the agent to add chatroom notification to the repo' do
-        repo_agent.should_receive(:add_chatroom_to_repo).with('my_org/my_repo', 'my_room', listener)
-        manager.update('my_org/my_repo', chatroom: 'my_room')
+      let(:options) { Hash.new }
+
+      after(:each) { manager.update('my_org/my_repo', options) }
+
+      context 'when passed a team' do
+        let(:options) { { team: '123' } }
+
+        it 'tells the agent to add the repo to the team' do
+          repo_agent.should_receive(:add_repo_to_team).with('my_org/my_repo', 123, listener)
+        end
+      end
+
+      context 'when passed a nil team' do
+        it 'does not tell the agent to add the repo to the team' do
+          repo_agent.should_not_receive(:add_repo_to_team)
+        end
+      end
+
+      context 'when passed a chatroom' do
+        let(:options) { { chatroom: 'my_room' } }
+
+        it 'tells the agent to add chatroom notification to the repo' do
+          repo_agent.should_receive(:add_chatroom_to_repo).with('my_org/my_repo', 'my_room', listener)
+        end
+      end
+
+      context 'when passed a nil chatroom' do
+        it 'does not tell the agent to add chatroom notification to the repo' do
+          repo_agent.should_not_receive(:add_chatroom_to_repo)
+        end
       end
     end
   end
