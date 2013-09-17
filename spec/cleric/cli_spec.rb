@@ -56,7 +56,7 @@ module Cleric
     let(:agent) { mock('GitHub').as_null_object }
     let(:console) { mock(ConsoleAnnouncer) }
     let(:hipchat) { mock(HipChatAnnouncer) }
-    
+
     before(:each) do
       CLIConfigurationProvider.stub(:new) { config }
       GitHubAgent.stub(:new) { agent }
@@ -132,10 +132,11 @@ module Cleric
       describe '#update' do
         let(:name) { 'example_name' }
         let(:manager) { mock(RepoManager).as_null_object }
+        let(:options) { { chatroom: 'my_room' } }
 
         before(:each) do
           RepoManager.stub(:new) { manager }
-          stub_options_for(repo, chatroom: 'my_room')
+          stub_options_for(repo, options)
         end
 
         after(:each) { repo.update(name) }
@@ -147,6 +148,14 @@ module Cleric
         end
         it 'delegates creation to the manager' do
           manager.should_receive(:update).with(name, hash_including(chatroom: 'my_room'))
+        end
+
+        context 'when given a team option' do
+          let(:options) { { chatroom: 'my_room', team: '1234' } }
+
+          it 'delegates creation to the manager' do
+            manager.should_receive(:update).with(name, hash_including(team: '1234'))
+          end
         end
       end
     end
