@@ -46,6 +46,7 @@ module Cleric
     end
 
     describe '#add_repo_to_team' do
+      before(:each) { client.stub(:team) { mock(name: 'Fabbo Team') } }
       after(:each) { agent.add_repo_to_team('my_org/my_repo', '1234', listener) }
 
       include_examples :client
@@ -53,27 +54,28 @@ module Cleric
         client.should_receive(:add_team_repository).with(1234, 'my_org/my_repo')
       end
       it 'announces success to the listener' do
-        listener.should_receive(:repo_added_to_team).with('my_org/my_repo', '1234')
+        listener.should_receive(:repo_added_to_team).with('my_org/my_repo', 'Fabbo Team')
       end
     end
 
     describe '#add_user_to_team' do
       let(:listener) { mock('Listener').as_null_object }
-
+      
+      before(:each) { client.stub(:team) { mock(name: 'Fabbo Team') } }
       after(:each) { agent.add_user_to_team('a_user', '1234', listener) }
 
       it 'add the user to the team via the client' do
         client.should_receive(:add_team_member).with(1234, 'a_user')
       end
       it 'announces success to the listener' do
-        listener.should_receive(:user_added_to_team).with('a_user', '1234')
+        listener.should_receive(:user_added_to_team).with('a_user', 'Fabbo Team')
       end
     end
 
     describe '#create_authorization' do
       before(:each) do
         client.stub(:create_authorization) do
-          stub('Auth', token: 'abc123')
+          mock('Auth', token: 'abc123')
         end
       end
       after(:each) { agent.create_authorization }
@@ -104,10 +106,10 @@ module Cleric
 
     describe '#repo_pull_request_ranges' do
       let(:pull_request) do
-        stub('PullRequest',
+        mock('PullRequest',
           merged_at: merged_at,
-          base: stub('Commit', sha: '123').as_null_object,
-          head: stub('Commit', sha: '456').as_null_object,
+          base: mock('Commit', sha: '123').as_null_object,
+          head: mock('Commit', sha: '456').as_null_object,
           number: '789'
         ).as_null_object
       end
