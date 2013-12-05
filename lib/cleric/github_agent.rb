@@ -22,7 +22,7 @@ module Cleric
     # @param team [String] Numeric id of the team.
     def add_repo_to_team(repo, team, listener)
       client.add_team_repository(team.to_i, repo)
-      listener.repo_added_to_team(repo, team)
+      listener.repo_added_to_team(repo, team_name(team))
     end
 
     # Adds a GitHub user to a team.
@@ -30,7 +30,7 @@ module Cleric
     # @param team [String] Numeric id of the team.
     def add_user_to_team(username, team, listener)
       client.add_team_member(team.to_i, username)
-      listener.user_added_to_team(username, team)
+      listener.user_added_to_team(username, team_name(team))
     end
 
     # Creates a GitHub authorization and saves it to the config.
@@ -104,5 +104,10 @@ module Cleric
     def credentials
       @credentials ||= @config.github_credentials
     end
+    
+    def team_name(team)
+      client.team(team).name
+    end
+    
   end
 end
