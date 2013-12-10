@@ -3,18 +3,18 @@ require 'spec_helper'
 module Cleric
   describe RepoAuditor do
     subject(:auditor) { RepoAuditor.new(config, listener) }
-    let(:config) { mock('Config', repo_agent: agent).as_null_object }
-    let(:listener) { mock('Listener').as_null_object }
-    let(:agent) { mock('Agent', repo_pull_request_ranges: ranges).as_null_object }
+    let(:config) { double('Config', repo_agent: agent).as_null_object }
+    let(:listener) { double('Listener').as_null_object }
+    let(:agent) { double('Agent', repo_pull_request_ranges: ranges).as_null_object }
     let(:ranges) { [{ base: 'b', head: 'd' }, { base: 'f', head: 'h' }] }
-    let(:client) { mock('Client', log: log).as_null_object }
-    let(:log) { ('a'..'i').map {|sha| mock('LogEntry', sha: sha, parents: ['z']) } }
+    let(:client) { double('Client', log: log).as_null_object }
+    let(:log) { ('a'..'i').map {|sha| double('LogEntry', sha: sha, parents: ['z']) } }
 
     describe '#audit_repo' do
       before(:each) do
         Git.stub(:open) { client }
         log.stub(:between) do |from, to|
-          (from..to).map {|sha| mock('LogEntry', sha: sha) }
+          (from..to).map {|sha| double('LogEntry', sha: sha) }
         end
 
         # Commits with multiple parents (i.e. merge commits) should be ignored.

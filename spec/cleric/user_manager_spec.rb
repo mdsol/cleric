@@ -3,9 +3,9 @@ require 'spec_helper'
 module Cleric
   describe UserManager do
     subject(:manager) { UserManager.new(config, listener) }
-    let(:config) { mock('Config', repo_agent: repo_agent).as_null_object }
-    let(:listener) { mock('Listener') }
-    let(:repo_agent) { mock('RepoAgent').as_null_object }
+    let(:config) { double('Config', repo_agent: repo_agent).as_null_object }
+    let(:listener) { double('Listener') }
+    let(:repo_agent) { double('RepoAgent').as_null_object }
 
     describe '#remove' do
       after(:each) { manager.remove('user@example.com', 'an_org') }

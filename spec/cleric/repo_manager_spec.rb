@@ -3,8 +3,8 @@ require 'spec_helper'
 module Cleric
   describe RepoManager do
     subject(:manager) { RepoManager.new(repo_agent, listener) }
-    let(:repo_agent) { mock('RepoAgent').as_null_object }
-    let(:listener) { mock('Listener').as_null_object }
+    let(:repo_agent) { double('RepoAgent').as_null_object }
+    let(:listener) { double('Listener').as_null_object }
 
     describe '#create' do
       let(:chatroom) { 'my_room' }

@@ -3,10 +3,10 @@ require 'spec_helper'
 module Cleric
   describe GitHubAgent do
     subject(:agent) { GitHubAgent.new(config) }
-    let(:config) { mock('ConfigProvider', github_credentials: credentials).as_null_object }
+    let(:config) { double('ConfigProvider', github_credentials: credentials).as_null_object }
     let(:credentials) { { login: 'me', password: 'secret' } }
-    let(:client) { mock('GitHubClient').as_null_object }
-    let(:listener) { mock('Listener').as_null_object }
+    let(:client) { double('GitHubClient').as_null_object }
+    let(:listener) { double('Listener').as_null_object }
     
     before(:each) { Octokit::Client.stub(:new) { client } }
 
@@ -46,7 +46,7 @@ module Cleric
     end
 
     describe '#add_repo_to_team' do
-      before(:each) { client.stub(:team) { mock(name: 'Fabbo Team') } }
+      before(:each) { client.stub(:team) { double(name: 'Fabbo Team') } }
       after(:each) { agent.add_repo_to_team('my_org/my_repo', '1234', listener) }
 
       include_examples :client
@@ -59,9 +59,9 @@ module Cleric
     end
 
     describe '#add_user_to_team' do
-      let(:listener) { mock('Listener').as_null_object }
+      let(:listener) { double('Listener').as_null_object }
       
-      before(:each) { client.stub(:team) { mock(name: 'Fabbo Team') } }
+      before(:each) { client.stub(:team) { double(name: 'Fabbo Team') } }
       after(:each) { agent.add_user_to_team('a_user', '1234', listener) }
 
       it 'add the user to the team via the client' do
@@ -75,7 +75,7 @@ module Cleric
     describe '#create_authorization' do
       before(:each) do
         client.stub(:create_authorization) do
-          mock('Auth', token: 'abc123')
+          double('Auth', token: 'abc123')
         end
       end
       after(:each) { agent.create_authorization }
@@ -106,10 +106,10 @@ module Cleric
 
     describe '#repo_pull_request_ranges' do
       let(:pull_request) do
-        mock('PullRequest',
+        double('PullRequest',
           merged_at: merged_at,
-          base: mock('Commit', sha: '123').as_null_object,
-          head: mock('Commit', sha: '456').as_null_object,
+          base: double('Commit', sha: '123').as_null_object,
+          head: double('Commit', sha: '456').as_null_object,
           number: '789'
         ).as_null_object
       end
@@ -137,7 +137,7 @@ module Cleric
     end
 
     describe '#remove_user_from_org' do
-      let(:users) { [ mock('User', username: 'a_user') ] }
+      let(:users) { [ double('User', username: 'a_user') ] }
 
       before(:each) { client.stub(:search_users) { users } }
       after(:each) { agent.remove_user_from_org('user@example.com', 'an_org', listener) }
@@ -168,7 +168,7 @@ module Cleric
     describe '#verify_user_public_email' do
       let(:email) { 'user@example.com' }
 
-      before(:each) { client.stub(:user) { mock('User', email: email) } }
+      before(:each) { client.stub(:user) { double('User', email: email) } }
       after(:each) { agent.verify_user_public_email('a_user', 'user@example.com', listener) }
 
       include_examples :client
