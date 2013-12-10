@@ -46,10 +46,10 @@ end
 
 module Cleric
   describe CLI do
-    let(:config) { mock('Config') }
-    let(:agent) { mock('GitHub').as_null_object }
-    let(:console) { mock(ConsoleAnnouncer) }
-    let(:hipchat) { mock(HipChatAnnouncer) }
+    let(:config) { double('Config') }
+    let(:agent) { double('GitHub').as_null_object }
+    let(:console) { double(ConsoleAnnouncer) }
+    let(:hipchat) { double(HipChatAnnouncer) }
 
     before(:each) do
       CLIConfigurationProvider.stub(:new) { config }
@@ -87,7 +87,7 @@ module Cleric
 
       describe '#create' do
         let(:name) { 'example_name' }
-        let(:manager) { mock(RepoManager).as_null_object }
+        let(:manager) { double(RepoManager).as_null_object }
 
         before(:each) do
           RepoManager.stub(:new) { manager }
@@ -107,7 +107,7 @@ module Cleric
       end
 
       describe '#audit' do
-        let(:auditor) { mock(RepoAuditor).as_null_object }
+        let(:auditor) { double(RepoAuditor).as_null_object }
 
         before(:each) { RepoAuditor.stub(:new) { auditor } }
         after(:each) { repo.audit('my/repo') }
@@ -125,7 +125,7 @@ module Cleric
 
       describe '#update' do
         let(:name) { 'example_name' }
-        let(:manager) { mock(RepoManager).as_null_object }
+        let(:manager) { double(RepoManager).as_null_object }
         let(:options) { { chatroom: 'my_room' } }
 
         before(:each) do
@@ -156,7 +156,7 @@ module Cleric
 
     describe User do
       subject(:user) { Cleric::User.new }
-      let(:manager) { mock(UserManager).as_null_object }
+      let(:manager) { double(UserManager).as_null_object }
 
       before(:each) do
         UserManager.stub(:new) { manager }

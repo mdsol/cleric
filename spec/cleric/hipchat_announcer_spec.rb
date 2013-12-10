@@ -3,9 +3,9 @@ require 'spec_helper'
 module Cleric
   describe HipChatAnnouncer do
     subject(:announcer) { HipChatAnnouncer.new(config, listener, user) }
-    let(:config) { mock('Config', hipchat_api_token: 'api_token', hipchat_announcement_room_id: 'room_id') }
-    let(:listener) { mock('Listener').as_null_object }
-    let(:hipchat) { mock('HipChat').as_null_object }
+    let(:config) { double('Config', hipchat_api_token: 'api_token', hipchat_announcement_room_id: 'room_id') }
+    let(:listener) { double('Listener').as_null_object }
+    let(:hipchat) { double('HipChat').as_null_object }
     let(:user) {'an_admin'}
 
     before(:each) { HipChat::API.stub(:new) { hipchat } }

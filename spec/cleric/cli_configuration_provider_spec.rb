@@ -71,7 +71,7 @@ module Cleric
 
     describe '#repo_agent' do
       # Ensure `new` returns differing instances.
-      before(:each) { GitHubAgent.stub(:new).and_return(mock('Agent'), mock('Agent')) }
+      before(:each) { GitHubAgent.stub(:new).and_return(double('Agent'), double('Agent')) }
 
       it 'creates a configured GitHub agent' do
         GitHubAgent.should_receive(:new).with(config)

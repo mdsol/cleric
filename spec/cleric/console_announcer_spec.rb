@@ -3,7 +3,7 @@ require 'spec_helper'
 module Cleric
   describe ConsoleAnnouncer do
     subject(:announcer) { ConsoleAnnouncer.new(io) }
-    let(:io) { mock('IO') }
+    let(:io) { double('IO') }
 
     shared_examples 'an announcing method' do |method, opts|
       after(:each) { announcer.__send__(method, *opts[:args]) }
